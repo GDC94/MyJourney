@@ -1,0 +1,20 @@
+{
+  // Config local para los drills de playground.
+  // El editor la usa (es la tsconfig más cercana a estos archivos), pero NO
+  // forma parte del build (`tsc -b`) ni de `pnpm typecheck` — así tus ejercicios
+  // a medio hacer nunca rompen la validación del código real.
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "types": ["node"],
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": ["**/*.ts"]
+}

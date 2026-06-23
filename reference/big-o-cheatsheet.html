@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Referencia · Big-O para frontend</title>
+  <link rel="stylesheet" href="../assets/lesson.css" />
+</head>
+<body>
+<main>
+  <p class="kicker">Referencia · Estructuras de datos</p>
+  <h1>Big-O para el frontend dev</h1>
+  <p class="subtitle">La esencia comprimida. Para consultar antes de decir una complejidad en voz alta.</p>
+
+  <h2>La escalera de complejidad (de mejor a peor)</h2>
+  <table>
+    <thead><tr><th>Notación</th><th>Nombre</th><th>n=1.000 → ~ops</th><th>Ejemplo típico</th></tr></thead>
+    <tbody>
+      <tr><td class="bigo g">O(1)</td><td>Constante</td><td>1</td><td>Acceso a índice, lookup en Map/Set</td></tr>
+      <tr><td class="bigo g">O(log n)</td><td>Logarítmica</td><td>~10</td><td>Binary search (array ordenado)</td></tr>
+      <tr><td class="bigo g">O(n)</td><td>Lineal</td><td>1.000</td><td>Una pasada: map, filter, for</td></tr>
+      <tr><td class="bigo y">O(n log n)</td><td>Linearítmica</td><td>~10.000</td><td><code>.sort()</code></td></tr>
+      <tr><td class="bigo r">O(n²)</td><td>Cuadrática</td><td>1.000.000</td><td>Doble loop anidado</td></tr>
+      <tr><td class="bigo r">O(2ⁿ)</td><td>Exponencial</td><td>~10³⁰¹</td><td>Recursión que se ramifica (fibonacci naive)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout why">
+    <p><strong>La regla de oro:</strong> Big-O describe cómo CRECE el costo cuando <code>n</code> crece — no el tiempo exacto. Se quedan con el término dominante y se tiran las constantes: <code>O(2n + 5)</code> → <code>O(n)</code>. Loops anidados sobre el mismo input multiplican: O(n)·O(n) = O(n²).</p>
+  </div>
+
+  <h2>Costo por estructura de datos (JS)</h2>
+  <table>
+    <thead><tr><th>Operación</th><th>Array</th><th>Object / Map</th><th>Set</th></tr></thead>
+    <tbody>
+      <tr><td>Acceso por clave/índice</td><td class="bigo g">O(1)</td><td class="bigo g">O(1)</td><td>—</td></tr>
+      <tr><td>Buscar un valor</td><td class="bigo r">O(n)</td><td class="bigo g">O(1)</td><td class="bigo g">O(1)</td></tr>
+      <tr><td><code>.has()</code> / <code>in</code></td><td class="bigo r">O(n) (<code>includes</code>)</td><td class="bigo g">O(1)</td><td class="bigo g">O(1)</td></tr>
+      <tr><td>Insertar / borrar al final</td><td class="bigo g">O(1)*</td><td class="bigo g">O(1)</td><td class="bigo g">O(1)</td></tr>
+      <tr><td>Insertar / borrar al inicio</td><td class="bigo r">O(n) (<code>shift</code>)</td><td class="bigo g">O(1)</td><td class="bigo g">O(1)</td></tr>
+    </tbody>
+  </table>
+  <p class="note cite">* amortizado. <code>push</code>/<code>pop</code> son O(1); <code>shift</code>/<code>unshift</code> reindexan todo → O(n).</p>
+
+  <h2>El trade que más vas a usar</h2>
+  <div class="callout win">
+    <p><strong>Doble loop O(n²) → hash map O(n).</strong> Si estás buscando algo dentro de un loop (<code>includes</code>, <code>find</code>, <code>indexOf</code>), tenés un O(n) escondido adentro de otro O(n). Pre-cargá un <code>Map</code> o <code>Set</code> de una pasada (O(n)) y reemplazá la búsqueda interna por un lookup O(1). Cambiás tiempo por memoria.</p>
+  </div>
+
+  <h2>Frase para la entrevista</h2>
+  <div class="callout why">
+    <p><em>"La solución naive es O(n²) porque por cada elemento recorro el resto del array. Puedo bajarlo a O(n) tiempo / O(n) espacio usando un Map: una pasada para construirlo, y el lookup pasa a ser O(1)."</em></p>
+  </div>
+
+  <div class="lesson-footer">
+    <p>Vuelve a la lección: <a href="../lessons/0001-big-o-y-el-trade-del-hashmap.html">0001 · Big-O y el trade del hash map</a></p>
+    <p class="cite">Fuentes: <a href="https://www.bigocheatsheet.com/">bigocheatsheet.com</a> · <a href="https://neetcode.io/practice">NeetCode</a></p>
+  </div>
+</main>
+</body>
+</html>

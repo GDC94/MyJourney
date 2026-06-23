@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lección 0001 · Big-O y el trade del hash map</title>
+  <link rel="stylesheet" href="../assets/lesson.css" />
+</head>
+<body>
+<main>
+  <p class="kicker">Lección 0001 · Estructuras de datos</p>
+  <h1>Big-O y el trade del hash map</h1>
+  <p class="subtitle">Ponerle nombre y costo a lo que ya hacés — para defenderlo en voz alta.</p>
+
+  <div class="callout why">
+    <p><strong>Por qué esta lección, y por qué primera.</strong> En tu <code>playground/</code> ya tenés <code>group-by</code>, <code>key-by-id</code>, <code>count-by</code>. Ya usás hash maps, papá — sin nombrarlos. Lo que separa a un senior de un junior en una entrevista de estructuras de datos no es escribir el loop: es <em>decir la complejidad correcta mientras lo escribís</em>. Eso es lo que entrenamos hoy.</p>
+  </div>
+
+  <h2>1 · Qué mide Big-O (y qué no)</h2>
+  <p>Big-O no mide tiempo en milisegundos. Mide <strong>cómo crece el costo cuando crece el input <code>n</code></strong>. Por eso tirás las constantes y te quedás con el término dominante: <code>O(2n + 5)</code> se reporta como <code>O(n)</code>. No te importa el <code>+5</code> cuando <code>n</code> es un millón.</p>
+
+  <p>La intuición que necesitás hoy es una sola: <strong>un loop adentro de otro loop sobre el mismo input es O(n²)</strong>. Y la trampa es que ese segundo loop muchas veces está <em>escondido</em> dentro de un método.</p>
+
+  <div class="callout trap">
+    <p><strong>La trampa que casi nadie ve.</strong> <code>arr.includes(x)</code>, <code>arr.find(...)</code> y <code>arr.indexOf(x)</code> son O(n) — recorren el array. Si los llamás <em>adentro</em> de un loop, multiplicás: O(n) × O(n) = <strong>O(n²)</strong>. Se ve inocente. No lo es.</p>
+  </div>
+
+  <h2>2 · El antes: O(n²)</h2>
+  <p>Problema clásico ("two sum"): dado un array y un <code>target</code>, ¿hay dos números que sumen <code>target</code>? La versión naive:</p>
+  <pre><code><span class="cmt">// Por cada número, busco su complemento en el RESTO del array.</span>
+function hasPair(nums, target) {
+  for (let i = 0; i &lt; nums.length; i++) {
+    for (let j = i + 1; j &lt; nums.length; j++) {   <span class="cmt">// ← loop adentro de loop</span>
+      if (nums[i] + nums[j] === target) return true;
+    }
+  }
+  return false;
+}
+<span class="cmt">// O(n²) tiempo · O(1) espacio</span></code></pre>
+
+  <h2>3 · El después: O(n) con un Set</h2>
+  <p>El insight: mientras recorro, me pregunto <em>"¿ya vi el complemento que necesito?"</em>. Si guardo lo que vi en un <code>Set</code>, esa pregunta es un lookup O(1).</p>
+  <pre><code>function hasPair(nums, target) {
+  const seen = new Set();                <span class="cmt">// memoria: lo que ya recorrí</span>
+  for (const n of nums) {
+    if (seen.has(target - n)) return true; <span class="cmt">// ← lookup O(1), no O(n)</span>
+    seen.add(n);
+  }
+  return false;
+}
+<span class="cmt">// O(n) tiempo · O(n) espacio</span></code></pre>
+
+  <div class="callout win">
+    <p><strong>El trade en una frase:</strong> cambiaste <strong>tiempo por memoria</strong>. Una pasada O(n) para construir el Set, y la búsqueda interna pasó de O(n) a O(1). De O(n²) a O(n). Ese es el patrón que vas a repetir el 80% de las veces.</p>
+  </div>
+
+  <p class="note">Profundizá la tabla de costos en la <a href="../reference/big-o-cheatsheet.html">referencia de Big-O</a> — tenela abierta al lado mientras practicás.</p>
+
+  <h2>4 · Recuperá de memoria (no leas — pensá)</h2>
+  <p>Antes de ver la respuesta, contestá vos: dado <code>const nums = [3, 1, 4, 1, 5]</code>, ¿cuál es la complejidad de detectar si hay <strong>duplicados</strong> usando un <code>Set</code>, y cómo lo escribís? Decilo en voz alta. <em>Después</em> abrí esto:</p>
+  <button class="reveal-btn" onclick="this.nextElementSibling.classList.toggle('open'); this.textContent = this.nextElementSibling.classList.contains('open') ? 'OCULTAR' : 'REVELAR RESPUESTA'">REVELAR RESPUESTA</button>
+  <div class="reveal-body">
+    <pre><code>function hasDup(nums) {
+  const seen = new Set();
+  for (const n of nums) {
+    if (seen.has(n)) return true;   <span class="cmt">// lookup O(1)</span>
+    seen.add(n);
+  }
+  return false;
+}
+<span class="cmt">// O(n) tiempo · O(n) espacio</span></code></pre>
+    <p>Si dijiste <em>"O(n) tiempo, O(n) espacio, una pasada con Set"</em> — ganaste la lección. Si dijiste "O(n²)", releé la sección 1: el <code>.has()</code> de un Set es O(1), no O(n). Esa es justo la distinción que te hace senior.</p>
+  </div>
+
+  <h2>5 · Chequeo rápido</h2>
+
+  <div class="quiz" data-correct="0">
+    <p class="q">¿Cuál es la complejidad total de <code>nums.includes(x)</code> ejecutado adentro de un <code>for</code> sobre <code>nums</code>?</p>
+    <button class="opt">O de n al cuadrado</button>
+    <button class="opt">O de n más lineal</button>
+    <button class="opt">O de uno constante</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz" data-correct="1">
+    <p class="q">¿Qué ganás al cambiar un doble loop por un <code>Map</code> precargado?</p>
+    <button class="opt">Menos memoria usada hoy</button>
+    <button class="opt">Menos tiempo, más memoria</button>
+    <button class="opt">Menos tiempo, igual memoria</button>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="callout why">
+    <p><strong>Fuente primaria recomendada (leé esto después):</strong> <a href="https://www.bigocheatsheet.com/">bigocheatsheet.com</a> — la tabla canónica de complejidades. Tenela de cabecera. Para elegir el próximo patrón: <a href="https://neetcode.io/practice">NeetCode</a>.</p>
+  </div>
+
+  <div class="lesson-footer">
+    <p><strong>Tu victoria de hoy:</strong> reconocés el O(n²) escondido y sabés bajarlo a O(n) con Set/Map — diciendo la complejidad en voz alta.</p>
+    <p>Referencia: <a href="../reference/big-o-cheatsheet.html">Big-O cheat sheet</a></p>
+    <div class="ask">
+      <strong>Soy tu profe — preguntame.</strong> ¿No te cerró el "amortizado"? ¿Querés ver por qué <code>shift</code> es O(n)? ¿Querés que te tire 3 problemas para practicar este patrón? Escribime acá nomás. La próxima lección encadena con <strong>two pointers</strong> (el otro patrón que baja O(n²) a O(n), pero sin gastar memoria).</p>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.querySelectorAll('.quiz').forEach(function (quiz) {
+    var correct = Number(quiz.dataset.correct);
+    var opts = quiz.querySelectorAll('.opt');
+    var fb = quiz.querySelector('.feedback');
+    opts.forEach(function (opt, i) {
+      opt.addEventListener('click', function () {
+        opts.forEach(function (o) { o.classList.remove('correct', 'wrong'); });
+        if (i === correct) {
+          opt.classList.add('correct');
+          fb.textContent = '✓ Correcto. Eso es exactamente lo que decís en la entrevista.';
+          fb.className = 'feedback show-correct';
+        } else {
+          opt.classList.add('wrong');
+          opts[correct].classList.add('correct');
+          fb.textContent = '✗ Casi. La verde es la correcta — fijate por qué arriba.';
+          fb.className = 'feedback show-wrong';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
