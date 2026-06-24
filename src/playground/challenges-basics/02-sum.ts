@@ -15,6 +15,7 @@ console.log(sum([10, 20, 30])) // esperado: 60
 
 // dado un arra devulve un nuevo array  [1,2,3] -> [1,1,2,2]
 function double(numbers: number[]): number[] {
- numbers.map( n => [n, n]);
-
+ const res = numbers.map( n => [n, n]);
+ return res.flat();
 }
+console.log(double([1,2,3]))
