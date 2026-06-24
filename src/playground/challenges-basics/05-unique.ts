@@ -3,8 +3,7 @@
 // Correr: pnpm tsx src/playground/challenges-basics/05-unique.ts
 
 function unique<T>(arr: T[]): T[] {
-  // TODO
-  return []
+  return arr.filter((x, i) => arr.indexOf(x) === i)
 }
 
 console.log(unique([1, 2, 2, 3, 1, 4])) // esperado: [1, 2, 3, 4]
